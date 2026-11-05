@@ -101,15 +101,17 @@ function parseNode(node) {
     textStyles.color = rgbToHex(node.fills[0].color);
   }
 
-  return `<Text style=${JSON.stringify(textStyles)}>
-${node.characters}
+  // style={{...}}: the outer braces open a JSX expression, the inner ones are the object.
+  // The text goes through JSON.stringify so quotes, { } and < > in a design cannot break the JSX.
+  return `<Text style={${JSON.stringify(textStyles)}}>
+{${JSON.stringify(node.characters ?? "")}}
 </Text>\n`;
 }
 
   if (node.children) {
     const styles = extractStyles(node);
 
-    code += `<View style=${JSON.stringify(styles)}>\n`;
+    code += `<View style={${JSON.stringify(styles)}}>\n`;
 
     node.children.forEach(child => {
       code += parseNode(child);
@@ -140,9 +142,9 @@ app.get("/tools", (req, res) => {
         input_schema: {
           type: "object",
           properties: {
-            designData: { type: "object" }
+            fileId: { type: "string" }
           },
-          required: ["designData"]
+          required: ["fileId"]
         }
       }
     ]

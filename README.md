@@ -9,15 +9,29 @@ An Express-based tool server that reads Figma design files and converts layout, 
 - Generates a functional React Native screen component
 - Exposes tool-discovery and execution HTTP endpoints
 
+The endpoints follow the idea of MCP (Model Context Protocol) tools: a discovery list with input schemas, and one call per tool. They are plain HTTP/JSON, not the MCP JSON-RPC protocol, so an MCP client cannot connect to them directly yet.
+
+| Endpoint | Input | Output |
+|---|---|---|
+| `GET /tools` | – | The two tools and their input schemas |
+| `POST /tool/readFigma` | `{"fileId": "..."}` | The Figma document tree |
+| `POST /tool/generateReactNative` | `{"fileId": "..."}` | `{"code": "..."}`: a React Native screen component |
+
 ## Run locally
 
 ```bash
 npm install
-copy .env.example .env
 npm start
 ```
 
-Set `FIGMA_TOKEN` in your environment before starting the server. By default it listens on port `3000`.
+The server reads the token from the `FIGMA_TOKEN` environment variable (it does not load a `.env` file). In PowerShell:
+
+```powershell
+$env:FIGMA_TOKEN = "your_figma_personal_access_token"
+npm start
+```
+
+By default it listens on port `3000`.
 
 ## Security
 
